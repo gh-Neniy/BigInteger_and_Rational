@@ -13,7 +13,7 @@
 
 class BigInteger {
  public:
-  using BlockT = std::int32_t;  // Для случая с -INT_MIN
+  using BlockT = std::int32_t;
   static constexpr int cMaxBlock = 1'000'000'000;
   static constexpr int cBlockSize = 9;
 
