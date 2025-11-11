@@ -6,15 +6,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #ifndef NENIY_BIGINTEGER
 #define NENIY_BIGINTEGER
 
 class BigInteger {
  public:
-  using BlockT = int64_t;  // Для случая с -INT_MIN
-  static const int cMaxBlock = 1'000'000'000;
-  static const int cBlockSize = 9;
+  using BlockT = std::int32_t;  // Для случая с -INT_MIN
+  static constexpr int cMaxBlock = 1'000'000'000;
+  static constexpr int cBlockSize = 9;
 
   BigInteger(int /*value*/ = 0);
 
@@ -160,9 +161,9 @@ BigInteger operator%(const BigInteger& lhs, const BigInteger& rhs) {
 
 BigInteger::BigInteger(int value) : is_negative_(value < 0) {
   if (value == INT_MIN) {
-    blocks_.push_back(static_cast<BlockT>(INT_MAX) + 1);
-    blocks_.push_back(blocks_[0] / cMaxBlock);
-    blocks_[0] %= cMaxBlock;
+    std::uint32_t parse_value = static_cast<std::uint32_t>(INT_MAX) + 1;
+    blocks_.push_back(parse_value % cMaxBlock);
+    blocks_.push_back(parse_value / cMaxBlock);
     return;
   }
   if (is_negative_) {
