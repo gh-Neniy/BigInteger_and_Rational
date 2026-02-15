@@ -168,6 +168,7 @@ void TestDiv() {
   assert(333'333'333'333_bi / 3 = 111'111'111'111_bi);
 
   BigInteger a = 1337;
+  assert(+a / +a == 1);
   assert(a / a == 1);
   assert(a / -a == -1);
   assert(-a / a == -1);
@@ -257,6 +258,4 @@ int main() {
   std::cout << "Test div passed.\n";
   TestDivWithRemainder();
   std::cout << "Test div with remainder passed.\n";
-  
-  std::cout << "All tests were passed.\n";
 }

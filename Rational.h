@@ -6,17 +6,17 @@
 
 class Rational {
  public:
-  Rational(int /*num*/ = 0, int /*denum*/ = 1);
+  Rational(int = 0, int = 1);
 
-  Rational(const BigInteger& /*num*/, const BigInteger& /*denum*/ = 1);
+  Rational(const BigInteger&, const BigInteger& = 1);
 
-  Rational& operator+=(const Rational& /*rhs*/);
+  Rational& operator+=(const Rational&);
 
-  Rational& operator-=(const Rational& /*rhs*/);
+  Rational& operator-=(const Rational&);
 
-  Rational& operator*=(const Rational& /*rhs*/);
+  Rational& operator*=(const Rational&);
 
-  Rational& operator/=(const Rational& /*rhs*/);
+  Rational& operator/=(const Rational&);
 
   Rational operator-() const;
 
@@ -33,7 +33,7 @@ class Rational {
   explicit operator double() const;
 
  private:
-  static BigInteger Gcd(BigInteger /*a*/, BigInteger /*b*/);
+  static BigInteger Gcd(BigInteger, BigInteger);
 
   void SetNegative();
 

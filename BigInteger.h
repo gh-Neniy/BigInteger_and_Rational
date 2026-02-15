@@ -17,25 +17,27 @@ class BigInteger {
   static constexpr int cMaxBlock = 1'000'000'000;
   static constexpr int cBlockSize = 9;
 
-  BigInteger(int /*value*/ = 0);
+  BigInteger(int = 0);
 
-  explicit BigInteger(unsigned long long /*value*/, size_t /*unused*/);
+  explicit BigInteger(unsigned long long, size_t /*unused*/);
 
-  explicit BigInteger(const char* /*str*/);
+  explicit BigInteger(const char*);
 
   std::string toString() const;
 
-  BigInteger& operator+=(const BigInteger& /*rhs*/);
+  BigInteger& operator+=(const BigInteger&);
 
-  BigInteger& operator-=(const BigInteger& /*rhs*/);
+  BigInteger& operator-=(const BigInteger&);
 
-  BigInteger& operator*=(const BigInteger& /*rhs*/);
+  BigInteger& operator*=(const BigInteger&);
 
-  BigInteger& operator/=(const BigInteger& /*rhs*/);
+  BigInteger& operator/=(const BigInteger&);
 
-  BigInteger& operator%=(const BigInteger& /*rhs*/);
+  BigInteger& operator%=(const BigInteger&);
 
   BigInteger operator-() const;
+
+  BigInteger operator+() const;
 
   BigInteger& operator++();
 
@@ -60,7 +62,7 @@ class BigInteger {
 
   void DecrementLogic();
 
-  std::pair<BigInteger, BigInteger> DivMod(const BigInteger& /*rhs*/) const;
+  std::pair<BigInteger, BigInteger> DivMod(const BigInteger&) const;
 
   bool is_negative_;
   std::vector<BlockT> blocks_;  // Блоки по 9 цифр (little-endian)
@@ -354,6 +356,10 @@ BigInteger BigInteger::operator-() const {
   BigInteger new_bigint = *this;
   new_bigint.is_negative_ ^= 1;
   return new_bigint;
+}
+
+BigInteger BigInteger::operator+() const {
+  return *this;
 }
 
 void BigInteger::IncrementLogic() {
