@@ -1,11 +1,11 @@
-#include <iostream>
-
 #include "bigint/operation.h"
 #include "bigint/method.h"
 #include "bigint/performance.h"
 #include "rational/operation.h"
 #include "rational/method.h"
 #include "rational/performance.h"
+
+#include <iostream>
 
 int main() {
   std::cout << "BigInteger operation tests started\n";

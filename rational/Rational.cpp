@@ -1,49 +1,4 @@
-#pragma once
-#include "BigInteger.h"
-
-#ifndef NENIY_RATIONAL
-#define NENIY_RATIONAL
-
-class Rational {
- public:
-  Rational(int = 0, int = 1);
-
-  Rational(const BigInteger&, const BigInteger& = 1);
-
-  Rational& operator+=(const Rational&);
-
-  Rational& operator-=(const Rational&);
-
-  Rational& operator*=(const Rational&);
-
-  Rational& operator/=(const Rational&);
-
-  Rational operator-() const;
-
-  std::string toString() const;
-
-  std::string asDecimal(size_t /*precision*/) const;
-
-  bool IsNegative() const;
-
-  const BigInteger& GetNumerator() const { return numerator_; }
-
-  const BigInteger& GetDenominator() const { return denominator_; }
-
-  explicit operator double() const;
-
- private:
-  static BigInteger Gcd(BigInteger, BigInteger);
-
-  void SetNegative();
-
-  void Simplify();
-
-  static void DecimalIncrementation(std::string& /*decimal*/);
-
-  BigInteger numerator_;
-  BigInteger denominator_;
-};
+#include "Rational.h"
 
 std::strong_ordering operator<=>(const Rational& lhs, const Rational& rhs) {
   if (lhs.IsNegative() != rhs.IsNegative()) {
@@ -69,16 +24,19 @@ Rational operator+(const Rational& lhs, const Rational& rhs) {
   sum += rhs;
   return sum;
 }
+
 Rational operator-(const Rational& lhs, const Rational& rhs) {
   Rational diff = lhs;
   diff -= rhs;
   return diff;
 }
+
 Rational operator*(const Rational& lhs, const Rational& rhs) {
   Rational product = lhs;
   product *= rhs;
   return product;
 }
+
 Rational operator/(const Rational& lhs, const Rational& rhs) {
   Rational quotient = lhs;
   quotient /= rhs;
@@ -100,6 +58,7 @@ BigInteger Rational::Gcd(BigInteger a, BigInteger b) {
   }
   return a;
 }
+
 void Rational::SetNegative() {  // Починка знака (знак должен быть только у
                                 // числителя)
   if (numerator_.IsNegative() != denominator_.IsNegative()) {
@@ -139,11 +98,11 @@ void Rational::DecimalIncrementation(std::string& decimal) {
   if (carry) {
     if (decimal.back() == '.') {
       decimal.pop_back();
-      decimal = (++BigInteger(decimal.c_str())).toString();
+      decimal = (++BigInteger(decimal.c_str())).ToString();
     } else {
       std::string integer(decimal.begin(), decimal.begin() + i);
       std::string after_dot(decimal.begin() + i + 1, decimal.end());
-      decimal = (++BigInteger(integer.c_str())).toString() + '.' + after_dot;
+      decimal = (++BigInteger(integer.c_str())).ToString() + '.' + after_dot;
     }
   }
 }
@@ -152,6 +111,7 @@ Rational::Rational(int num, int denum) : numerator_(num), denominator_(denum) {
   Simplify();
   SetNegative();
 }
+
 Rational::Rational(const BigInteger& num, const BigInteger& denum)
     : numerator_(num), denominator_(denum) {
   Simplify();
@@ -165,6 +125,7 @@ Rational& Rational::operator+=(const Rational& rhs) {
   Simplify();
   return *this;
 }
+
 Rational& Rational::operator-=(const Rational& rhs) {
   numerator_ = numerator_ * rhs.denominator_ - rhs.numerator_ * denominator_;
   denominator_ *= rhs.denominator_;
@@ -172,6 +133,7 @@ Rational& Rational::operator-=(const Rational& rhs) {
   Simplify();
   return *this;
 }
+
 Rational& Rational::operator*=(const Rational& rhs) {
   numerator_ *= rhs.numerator_;
   denominator_ *= rhs.denominator_;
@@ -179,6 +141,7 @@ Rational& Rational::operator*=(const Rational& rhs) {
   Simplify();
   return *this;
 }
+
 Rational& Rational::operator/=(const Rational& rhs) {
   if (this == &rhs) {
     *this = 1;
@@ -198,19 +161,19 @@ Rational Rational::operator-() const {
   return new_rational;
 }
 
-std::string Rational::toString() const {
+std::string Rational::ToString() const {
   if (denominator_ == 1) {
-    return numerator_.toString();
+    return numerator_.ToString();
   }
-  return numerator_.toString() + '/' + denominator_.toString();
+  return numerator_.ToString() + '/' + denominator_.ToString();
 }
 
-std::string Rational::asDecimal(size_t precision) const {
+std::string Rational::AsDecimal(size_t precision) const {
   if (denominator_ == 1) {
     if (precision != 0) {
-      return numerator_.toString() + '.' + std::string(precision, '0');
+      return numerator_.ToString() + '.' + std::string(precision, '0');
     }
-    return numerator_.toString();
+    return numerator_.ToString();
   }
 
   auto dividend = numerator_;
@@ -218,7 +181,7 @@ std::string Rational::asDecimal(size_t precision) const {
     dividend.FlipSign();
   }
   auto quotient = dividend / denominator_;
-  std::string str_decimal = quotient.toString() + '.';  // целая часть
+  std::string str_decimal = quotient.ToString() + '.';  // целая часть
   dividend -= quotient * denominator_;
 
   int real_prec = precision / BigInteger::cBlockSize + 1;
@@ -226,7 +189,7 @@ std::string Rational::asDecimal(size_t precision) const {
   while (real_prec != 0) {
     dividend *= BigInteger::cMaxBlock;  // Добавление нулевого блока
     quotient = dividend / denominator_;
-    std::string str_quotient = quotient.toString();
+    std::string str_quotient = quotient.ToString();
     if (str_quotient.size() < BigInteger::cBlockSize) {
       str_quotient =
           std::string(BigInteger::cBlockSize - str_quotient.size(), '0') +
@@ -254,6 +217,4 @@ std::string Rational::asDecimal(size_t precision) const {
 
 bool Rational::IsNegative() const { return numerator_.IsNegative(); }
 
-Rational::operator double() const { return std::stod(asDecimal(100)); }
-
-#endif // NENIY_BIGINTEGER
+Rational::operator double() const { return std::stod(AsDecimal(100)); }

@@ -1,72 +1,6 @@
-#pragma once
-#include <limits.h>
+#include "BigInteger.h"
 
-#include <compare>
 #include <cstring>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cstdint>
-
-#ifndef NENIY_BIGINTEGER
-#define NENIY_BIGINTEGER
-
-class BigInteger {
- public:
-  using BlockT = std::int32_t;
-  static constexpr int cMaxBlock = 1'000'000'000;
-  static constexpr int cBlockSize = 9;
-
-  BigInteger(int = 0);
-
-  explicit BigInteger(unsigned long long, size_t /*unused*/);
-
-  explicit BigInteger(const char*);
-
-  std::string toString() const;
-
-  BigInteger& operator+=(const BigInteger&);
-
-  BigInteger& operator-=(const BigInteger&);
-
-  BigInteger& operator*=(const BigInteger&);
-
-  BigInteger& operator/=(const BigInteger&);
-
-  BigInteger& operator%=(const BigInteger&);
-
-  BigInteger operator-() const;
-
-  BigInteger operator+() const;
-
-  BigInteger& operator++();
-
-  BigInteger& operator--();
-
-  BigInteger operator++(int);
-
-  BigInteger operator--(int);
-
-  explicit operator bool() const;
-
-  void FlipSign();
-
-  bool IsZero() const;
-
-  bool IsNegative() const;
-
-  const std::vector<BlockT>& GetBlocks() const;
-
- private:
-  void IncrementLogic();
-
-  void DecrementLogic();
-
-  std::pair<BigInteger, BigInteger> DivMod(const BigInteger&) const;
-
-  bool is_negative_;
-  std::vector<BlockT> blocks_;  // Блоки по 9 цифр (little-endian)
-};
 
 std::strong_ordering operator<=>(const BigInteger& lhs, const BigInteger& rhs) {
   if (lhs.IsNegative() != rhs.IsNegative()) {
@@ -113,9 +47,10 @@ BigInteger operator""_bi(const char* str,
 }
 
 std::ostream& operator<<(std::ostream& os, const BigInteger& rhs) {
-  os << rhs.toString();
+  os << rhs.ToString();
   return os;
 }
+
 std::istream& operator>>(std::istream& is, BigInteger& rhs) {
   char digit;
   bool signgot = false;
@@ -140,21 +75,25 @@ BigInteger operator+(const BigInteger& lhs, const BigInteger& rhs) {
   sum += rhs;
   return sum;
 }
+
 BigInteger operator-(const BigInteger& lhs, const BigInteger& rhs) {
   BigInteger diff = lhs;
   diff -= rhs;
   return diff;
 }
+
 BigInteger operator*(const BigInteger& lhs, const BigInteger& rhs) {
   BigInteger product = lhs;
   product *= rhs;
   return product;
 }
+
 BigInteger operator/(const BigInteger& lhs, const BigInteger& rhs) {
   BigInteger product = lhs;
   product /= rhs;
   return product;
 }
+
 BigInteger operator%(const BigInteger& lhs, const BigInteger& rhs) {
   BigInteger remains = lhs;
   remains %= rhs;
@@ -179,6 +118,7 @@ BigInteger::BigInteger(int value) : is_negative_(value < 0) {
     blocks_[0] %= cMaxBlock;
   }
 }
+
 BigInteger::BigInteger(unsigned long long value, size_t /*unused*/)
     : is_negative_(false) {
   if (value == 0) {
@@ -189,6 +129,7 @@ BigInteger::BigInteger(unsigned long long value, size_t /*unused*/)
     value /= cMaxBlock;
   }
 }
+
 BigInteger::BigInteger(const char* str) : is_negative_(*str == '-') {
   if (is_negative_) {
     ++str;
@@ -221,7 +162,7 @@ BigInteger::BigInteger(const char* str) : is_negative_(*str == '-') {
   blocks_.push_back(block);
 }
 
-std::string BigInteger::toString() const {
+std::string BigInteger::ToString() const {
   // Без дополнения нулями (старший разряд)
   std::string bigint =
       (is_negative_ ? "-" : "") + std::to_string(blocks_.back());
@@ -269,6 +210,7 @@ BigInteger& BigInteger::operator+=(const BigInteger& rhs) {
   }
   return *this;
 }
+
 BigInteger& BigInteger::operator-=(const BigInteger& rhs) {
   if (!is_negative_ && rhs.is_negative_) {  // lhs-(-rhs) = lhs + rhs
     *this += -rhs;
@@ -313,6 +255,7 @@ BigInteger& BigInteger::operator-=(const BigInteger& rhs) {
   }
   return *this;
 }
+
 BigInteger& BigInteger::operator*=(const BigInteger& rhs) {
   if (IsZero() || rhs.IsZero()) {
     *this = 0;
@@ -339,10 +282,12 @@ BigInteger& BigInteger::operator*=(const BigInteger& rhs) {
   }
   return *this;
 }
+
 BigInteger& BigInteger::operator/=(const BigInteger& rhs) {
   *this = DivMod(rhs).first;
   return *this;
 }
+
 BigInteger& BigInteger::operator%=(const BigInteger& rhs) {
   *this = DivMod(rhs).second;
   return *this;
@@ -379,6 +324,7 @@ void BigInteger::IncrementLogic() {
     blocks_.push_back(1);
   }
 }
+
 BigInteger& BigInteger::operator++() {
   if (is_negative_ && blocks_.size() == 1 && blocks_[0] == 1) {
     *this = 0;
@@ -389,6 +335,7 @@ BigInteger& BigInteger::operator++() {
   }
   return *this;
 }
+
 void BigInteger::DecrementLogic() {
   int i = 0;
   --blocks_[i];
@@ -469,11 +416,13 @@ BigInteger& BigInteger::operator--() {
   }
   return *this;
 }
+
 BigInteger BigInteger::operator++(int) {
   BigInteger copy = *this;
   ++*this;
   return copy;
 }
+
 BigInteger BigInteger::operator--(int) {
   BigInteger copy = *this;
   --*this;
@@ -492,9 +441,8 @@ void BigInteger::FlipSign() {
 bool BigInteger::IsZero() const {
   return blocks_.size() == 1 && blocks_[0] == 0;
 }
+
 bool BigInteger::IsNegative() const { return is_negative_; }
 const std::vector<BigInteger::BlockT>& BigInteger::GetBlocks() const {
   return blocks_;
 }
-
-#endif // NENIY_BIGINTEGER
