@@ -1,4 +1,4 @@
-#include "../generate.h"
+#include "../generate.hpp"
 
 #include <chrono>
 #include <cmath>

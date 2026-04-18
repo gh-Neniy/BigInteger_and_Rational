@@ -1,6 +1,6 @@
-#include "performance.h"
+#include "performance.hpp"
 
-#include "../generate.h"
+#include "../generate.hpp"
 
 #include <chrono>
 #include <cmath>

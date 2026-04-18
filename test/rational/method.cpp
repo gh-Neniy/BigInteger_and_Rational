@@ -1,9 +1,9 @@
-#include "method.h"
+#include "method.hpp"
 
-#include "../../rational/Rational.h"
+#include "../../rational/Rational.hpp"
 
 #include <assert.h>
-#include <numeric>
+#include <cmath>
 
 void RationalTestToString() {
   Rational a(17, 18);
@@ -68,4 +68,82 @@ void RationalTestAsDecimal() {
 
   a = Rational("534170357139759183275324"_bi, "1395710389571356123759"_bi);
   assert(a.AsDecimal(12) == "382.722920980628");
+
+  assert(Rational(1, 3).AsDecimal(0) == "0");
+  assert(Rational(2, 3).AsDecimal(0) == "1");
+  assert(Rational(1, 2).AsDecimal(0) == "1");
+  assert(Rational(7, 3).AsDecimal(0) == "2");
+  assert(Rational(7, 2).AsDecimal(0) == "4");
+  assert(Rational(-1, 3).AsDecimal(0) == "0");
+  assert(Rational(-1, 2).AsDecimal(0) == "-1");
+  assert(Rational(-7, 3).AsDecimal(0) == "-2");
+  assert(Rational(-7, 2).AsDecimal(0) == "-4");
+
+  assert(Rational(1, 9).AsDecimal(9) == "0.111111111");
+  assert(Rational(1, 9).AsDecimal(8) == "0.11111111");
+  assert(Rational(1, 9).AsDecimal(17) == "0.11111111111111111");
+  assert(Rational(1, 9).AsDecimal(18) == "0.111111111111111111");
+
+  assert(Rational(99, 100).AsDecimal(1) == "1.0");
+  assert(Rational(999'999, 1'000'000).AsDecimal(5) == "1.00000");
+  assert(Rational(-999'999, 1'000'000).AsDecimal(5) == "-1.00000");
+
+  assert(Rational(1, 1'000'000).AsDecimal(3) == "0.000");
+  assert(Rational(-1, 1'000'000).AsDecimal(3) == "0.000");
+
+  assert(Rational(1, 4).AsDecimal(3) == "0.250");
+  assert(Rational(1, 8).AsDecimal(5) == "0.12500");
+  assert(Rational(-1, 4).AsDecimal(3) == "-0.250");
+
+  assert(Rational(5).AsDecimal(0) == "5");
+  assert(Rational(-5).AsDecimal(0) == "-5");
+  assert(Rational(0).AsDecimal(0) == "0");
+  assert(Rational(0).AsDecimal(3) == "0.000");
+}
+
+void RationalTestConstruct() {
+  assert(Rational(2, 4).ToString() == "1/2");
+  assert(Rational(10, 100).ToString() == "1/10");
+  assert(Rational(100, 10).ToString() == "10");
+  assert(Rational(-6, 8).ToString() == "-3/4");
+
+  assert(Rational(1, -2).ToString() == "-1/2");
+  assert(Rational(-1, -2).ToString() == "1/2");
+  assert(Rational(-3, -6).ToString() == "1/2");
+
+  assert(Rational(0, 5).ToString() == "0");
+  assert(Rational(0, -5).ToString() == "0");
+  assert(!Rational(0, -5).IsNegative());
+
+  assert(Rational().ToString() == "0");
+  assert(Rational(7).ToString() == "7");
+  assert(Rational(-7).ToString() == "-7");
+
+  assert(Rational("1000000000"_bi).ToString() == "1000000000");
+  assert(Rational("10"_bi, "100"_bi).ToString() == "1/10");
+  assert(Rational("-10"_bi, "100"_bi).ToString() == "-1/10");
+  assert(Rational("-10"_bi, "-100"_bi).ToString() == "1/10");
+
+  Rational a(3, 7);
+  assert((-a).ToString() == "-3/7");
+  assert((-(-a)).ToString() == "3/7");
+  Rational zero;
+  assert((-zero).ToString() == "0");
+  assert(!(-zero).IsNegative());
+}
+
+void RationalTestDouble() {
+  assert(std::abs(static_cast<double>(Rational(1, 2)) - 0.5) < 1e-12);
+  assert(std::abs(static_cast<double>(Rational(1, 4)) - 0.25) < 1e-12);
+  assert(std::abs(static_cast<double>(Rational(-3, 4)) + 0.75) < 1e-12);
+  assert(static_cast<double>(Rational(0)) == 0.0);
+
+  double one_third = static_cast<double>(Rational(1, 3));
+  assert(std::abs(one_third - (1.0 / 3.0)) < 1e-12);
+
+  double neg_two_thirds = static_cast<double>(Rational(-2, 3));
+  assert(std::abs(neg_two_thirds + (2.0 / 3.0)) < 1e-12);
+
+  assert(static_cast<double>(Rational(1000000)) == 1000000.0);
+  assert(static_cast<double>(Rational(-1000000)) == -1000000.0);
 }

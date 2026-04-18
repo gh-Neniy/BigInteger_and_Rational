@@ -1,4 +1,4 @@
-#include "Rational.h"
+#include "Rational.hpp"
 
 std::strong_ordering operator<=>(const Rational& lhs, const Rational& rhs) {
   if (lhs.IsNegative() != rhs.IsNegative()) {
@@ -6,7 +6,7 @@ std::strong_ordering operator<=>(const Rational& lhs, const Rational& rhs) {
                             : std::strong_ordering::greater;
   }
   BigInteger lhs_numerator = lhs.GetNumerator() * rhs.GetDenominator();
-  BigInteger rhs_numerator = rhs.GetNumerator() * rhs.GetDenominator();
+  BigInteger rhs_numerator = rhs.GetNumerator() * lhs.GetDenominator();
 
   if (lhs_numerator == rhs_numerator) {
     return std::strong_ordering::equal;
@@ -205,14 +205,26 @@ std::string Rational::AsDecimal(size_t precision) const {
     --to_delete;
   }
 
-  if (str_decimal.back() >=
-      '5') {  // Увеличение последней цифры на 1 с последующими переносами
+  if (str_decimal.back() >= '5') {  // Увеличение последней цифры на 1 с переносами
     str_decimal.pop_back();
     DecimalIncrementation(str_decimal);
   } else {  // Сначала проверка, затем удаление
     str_decimal.pop_back();
   }
-  return (IsNegative() ? "-" : "") + str_decimal;
+
+  if (!str_decimal.empty() && str_decimal.back() == '.') {
+    str_decimal.pop_back();
+  }
+  
+  bool is_zero_result = true;
+  for (char character : str_decimal) {
+    if (character != '0' && character != '.') {
+      is_zero_result = false;
+      break;
+    }
+  }
+  
+  return (IsNegative() && !is_zero_result ? "-" : "") + str_decimal;
 }
 
 bool Rational::IsNegative() const { return numerator_.IsNegative(); }

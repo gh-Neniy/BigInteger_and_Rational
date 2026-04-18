@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../bigint/BigInteger.h"
+#include "../bigint/BigInteger.hpp"
 
 #ifndef NENIY_RATIONAL
 #define NENIY_RATIONAL

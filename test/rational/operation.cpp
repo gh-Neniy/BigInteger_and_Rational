@@ -1,9 +1,8 @@
-#include "operation.h"
+#include "operation.hpp"
 
-#include "../../rational/Rational.h"
+#include "../../rational/Rational.hpp"
 
 #include <assert.h>
-#include <numeric>
 
 void CompareRationalEqual(const Rational& a, const Rational& b) {
   assert(a == b);
@@ -61,6 +60,23 @@ void RationalTestCompare() {
   a = -a;
   b = -b;
   CompareRational(b, a);
+
+  CompareRational(Rational(1, 2), Rational(1, 3));
+  CompareRational(Rational(1, 3), Rational(1, 5));
+  CompareRational(Rational(100, 999), Rational(100, 1000));
+  CompareRational(-Rational(1, 3), -Rational(1, 2));
+  CompareRational(-Rational(1, 5), -Rational(1, 3));
+
+  CompareRationalEqual(Rational(1, 2), Rational(2, 4));
+  CompareRationalEqual(Rational(3, 6), Rational(7, 14));
+  CompareRationalEqual(Rational(-3, 6), Rational(-7, 14));
+  CompareRationalEqual(Rational(-3, 6), Rational(7, -14));
+
+  CompareRational(Rational(1, 3), Rational(-1, 3));
+  CompareRational(Rational(0, 1), Rational(-1, 1000000));
+
+  CompareRational(Rational(1, 1'000'000'000), 0);
+  CompareRational(0, -Rational(1, 1'000'000'000));
 }
 
 void AddRationalEqual(const Rational& a, const Rational& b, const Rational& result) {

@@ -1,9 +1,8 @@
-#include "operation.h"
+#include "operation.hpp"
 
-#include "../../bigint/BigInteger.h"
+#include "../../bigint/BigInteger.hpp"
 
 #include <assert.h>
-#include <numeric>
 
 void CompareBigIntEqual(const BigInteger& a, const BigInteger& b) {
   assert(a == b);
